@@ -34,7 +34,7 @@ fi
 
 : ${TAG=strongswan-android-openssl-builder}
 
-DIR=$(dirname `readlink -f $0`)
+DIR=$(cd "$(dirname "$0")" && pwd)
 : ${OUT=$DIR/../app/src/main/jni/openssl}
 mkdir -p $OUT
 

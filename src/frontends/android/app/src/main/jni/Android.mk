@@ -20,7 +20,7 @@ strongswan_DIR := ../../../../../../../
 
 # includes
 strongswan_PATH := $(LOCAL_PATH)/$(strongswan_DIR)
-openssl_PATH := $(LOCAL_PATH)/openssl/include
+openssl_PATH := $(LOCAL_PATH)/openssl
 
 include $(strongswan_PATH)/Android.common.mk
 

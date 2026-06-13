@@ -7,7 +7,20 @@
 
 set -e
 
-export PATH=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+case "$(uname -s)" in
+Darwin)
+	HOST_TAG=darwin-x86_64
+	;;
+Linux)
+	HOST_TAG=linux-x86_64
+	;;
+*)
+	echo "Unsupported host OS: $(uname -s)"
+	exit 1
+	;;
+esac
+
+export PATH=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_TAG}/bin:$PATH
 # necessary for OpenSSL 1.1.1
 export ANDROID_NDK_HOME=${ANDROID_NDK_ROOT}
 
@@ -53,8 +66,9 @@ OPTIONS="${OPTIONS} \
 make distclean >/dev/null || true
 
 ./Configure ${OPTIONS}
-make -j $(nproc) build_generated >/dev/null
-make -j $(nproc) libcrypto.a >/dev/null
+	JOBS=${JOBS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)}
+	make -j ${JOBS} build_generated >/dev/null
+	make -j ${JOBS} libcrypto.a >/dev/null
 
 mkdir -p ${OUT_DIR}/${ABI}
 cp libcrypto.a ${OUT_DIR}/${ABI}
